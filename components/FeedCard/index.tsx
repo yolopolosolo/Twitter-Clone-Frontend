@@ -11,7 +11,7 @@ const FeedCard: React.FC = () => {
                 <Image src="https://avatars.githubusercontent.com/u/55348394?v=4" alt="user-image" height={50} width={50}/>
             </div>
             <div className=" col-span-11">
-                <h5>Sarvesh Makane</h5>
+                <h5>Yolo User</h5>
                 <p>
                 Hello 𝕏 ,<br/>
                 Message me for adaasdasdasdadadsasdasdasdasdadsasdadsasdad adwqffascascasdcadsdasdasdasd :<br/>
