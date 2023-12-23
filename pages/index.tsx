@@ -10,6 +10,9 @@ import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
 import toast from 'react-hot-toast';
 import { graphqlClient } from '@/clients/api';
 import { verifyGoogleTokenQuery } from '@/graphql/query/user';
+import { useCurrentUser } from '@/hooks/user';
+import { useQueryClient } from '@tanstack/react-query';
+import { QueryDocumentKeys } from 'graphql/language/ast';
 
 
 
@@ -59,6 +62,9 @@ const sideBarItems: TwitterSidebarButton[] = [
 
 export default function Home() {
 
+  const {user} = useCurrentUser()
+  const queryClient = useQueryClient()
+
   const handleGoogleLogin = useCallback(async (cred:CredentialResponse)=>{
     const googleTokenId = cred.credential;
     console.log(`GoogleTokenID + ${googleTokenId}`);
@@ -76,12 +82,14 @@ export default function Home() {
       window.localStorage.setItem('__twitter__token', verifyGoogleToken)
     }
 
-  },[])
+    await queryClient.invalidateQueries({queryKey:["current-user"]});
+
+  },[queryClient])
 
   return (
     <div>
       <div className='grid grid-cols-12 h-screen w-screen px-40 pt-8 overflow-auto'>
-        <div className="col-span-3">
+        <div className="col-span-3 relative">
           <div className="text-3xl h-fit w-fit hover:bg-gray-800 rounded-full p-3 cursor-pointer transition-all  ml-4">
           <FaXTwitter />
           </div>
@@ -98,6 +106,22 @@ export default function Home() {
             <div className=' mt-4 pr-4'>
               <button className=' bg-[#1D9BF0] py-3  rounded-full w-full text-white hover:bg-sky-600 font-semibold text-lg'>Post</button>
             </div>  
+            {
+              user &&
+              <div className='absolute bottom-5 flex gap-2 items-center hover:bg-gray-800 p-2 rounded-full w-60'>
+                {
+                user &&
+                user.profileImageUrl &&
+                (
+                <Image className='rounded-full' src={user.profileImageUrl} alt='user-image' height={50} width={50} />
+                )
+                }
+                <div className='flex'>
+                <h3 className='text-xl'>{user.firstName} {user.lastName}</h3>
+                </div>
+                
+              </div>
+            }
           </div>
         </div>
         <div className="col-span-5 overflow-scroll no-scrollbar">
@@ -108,10 +132,12 @@ export default function Home() {
           <FeedCard/>
         </div>
         <div className=' col-span-3 p-5'>
+          {!user &&
           <div className=" p-5 bg-slate-950 rounded-lg">
             <h1 className='my-2 text-xl'>New To Twitter ?</h1>
-          <GoogleLogin onSuccess={handleGoogleLogin} />
+            <GoogleLogin onSuccess={handleGoogleLogin} />
           </div>
+          } 
         </div>
       </div> 
     </div>
