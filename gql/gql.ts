@@ -13,6 +13,8 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
+    "#graphql\n    mutation CreateTweet($paylaod: CreateTweetData!) {\n    createTweet(paylaod: $paylaod) {\n    id\n    }\n    }\n": types.CreateTweetDocument,
+    "#graphql\n\n    query GetAllTweets{\n    getAllTweets {\n    id,\n    content,\n    ImageURL,\n    author {\n    firstName,\n    lastName,\n    profileImageUrl\n    }\n  }\n    }\n": types.GetAllTweetsDocument,
     "#graphql\nquery verifyUserWithGoogleToken($token: String!){\n    verifyGoogleToken(token: $token)\n}\n": types.VerifyUserWithGoogleTokenDocument,
     "#graphql\nquery GetUser {\n  getCurrentUser {\n    id,\n    firstName,\n    lastName,\n    profileImageUrl,\n    email\n  }\n}\n": types.GetUserDocument,
 };
@@ -31,6 +33,14 @@ const documents = {
  */
 export function graphql(source: string): unknown;
 
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "#graphql\n    mutation CreateTweet($paylaod: CreateTweetData!) {\n    createTweet(paylaod: $paylaod) {\n    id\n    }\n    }\n"): (typeof documents)["#graphql\n    mutation CreateTweet($paylaod: CreateTweetData!) {\n    createTweet(paylaod: $paylaod) {\n    id\n    }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "#graphql\n\n    query GetAllTweets{\n    getAllTweets {\n    id,\n    content,\n    ImageURL,\n    author {\n    firstName,\n    lastName,\n    profileImageUrl\n    }\n  }\n    }\n"): (typeof documents)["#graphql\n\n    query GetAllTweets{\n    getAllTweets {\n    id,\n    content,\n    ImageURL,\n    author {\n    firstName,\n    lastName,\n    profileImageUrl\n    }\n  }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
