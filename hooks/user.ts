@@ -1,5 +1,5 @@
 import { graphqlClient } from "@/clients/api"
-import { getLoggedInUserQuery } from "@/graphql/query/user"
+import { getLoggedInUserQuery, getUserByIdQuery } from "@/graphql/query/user"
 import { useQuery } from "@tanstack/react-query"
 
 export const useCurrentUser = () =>{
@@ -14,3 +14,4 @@ export const useCurrentUser = () =>{
 
     return {...query, user:query.data?.getCurrentUser}
 };
+

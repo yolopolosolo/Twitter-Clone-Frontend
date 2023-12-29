@@ -3,6 +3,7 @@ import Image from "next/image";
 import { LiaReplySolid } from "react-icons/lia";
 import { AiOutlineRetweet } from "react-icons/ai";
 import { LuHeart, LuShare2  } from "react-icons/lu";
+import Link from "next/link";
 import { Tweet } from "@/gql/graphql";
 
 interface FeedCardProps{
@@ -20,7 +21,10 @@ const FeedCard: React.FC<FeedCardProps> = (props) => {
             }
             </div>
             <div className=" col-span-11">
-                <h5>{data.author?.firstName} {data.author?.lastName}</h5>
+                <h5>
+                    <Link href={`/${data.author?.id}`}>{data.author?.firstName} {data.author?.lastName}
+                    </Link>
+                </h5>
                 <p>{data.content}</p>
 
                 <div className="flex justify-between mt-5 text-xl p-3 w-[90%]">
