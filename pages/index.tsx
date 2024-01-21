@@ -1,6 +1,7 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Image from 'next/image'
 import { RiImageAddLine } from "react-icons/ri";
+import { IoMdClose } from "react-icons/io";
 import FeedCard from "@/components/FeedCard";
 import { useCurrentUser } from '@/hooks/user';
 import { useCreateTweet, useGetAllTweets } from '@/hooks/tweet';
@@ -9,7 +10,9 @@ import TwitterLayout from '@/components/FeedCard/layout/TwitterLayout';
 import { GetServerSideProps } from 'next';
 import { graphql } from '@/gql';
 import { graphqlClient } from '@/clients/api';
-import { getAllTweetsQuery } from '@/graphql/query/tweet';
+import { getAllTweetsQuery, getSignedURLForTweetImageQuery } from '@/graphql/query/tweet';
+import axios from 'axios';
+import toast from 'react-hot-toast';
 
 
 interface HomeProps{
@@ -18,26 +21,71 @@ interface HomeProps{
 
 
 export default function Home(props:HomeProps) {
-
   const {user} = useCurrentUser();
-  const {mutate} = useCreateTweet();
+  const {mutateAsync} = useCreateTweet();
+  const {tweets=props.tweets as Tweet[]} = useGetAllTweets()
 
-  const [content,setContent] = useState('')
+
+  const [content,setContent] = useState('');
+  const [ImageURL,setImageURL] = useState('');
+
+  const handleInputFileChange = useCallback((input:HTMLInputElement) =>{
+    return async (event:Event)=>{
+      event.preventDefault();
+      const file: File | null | undefined = input.files?.item(0);
+      if(!file) return
+
+      const {getSignedURLForTweet} = await graphqlClient.request(
+        getSignedURLForTweetImageQuery,
+        {
+          imageName:file.name,
+          imageType:file.type
+        }
+      )
+
+      if(getSignedURLForTweet){
+        toast.loading('image uploading.....',{id:'2'})
+        await axios.put(getSignedURLForTweet,file,{
+          headers:{
+            'Content-Type': file.type
+          }
+        })
+
+        toast.success('Done',{id:'2'})
+        const url = new URL(getSignedURLForTweet);
+        const myUploadedFilePath = `${url.origin}${url.pathname}`; 
+        setImageURL(myUploadedFilePath)
+      }
+    }
+  },[])
 
   ///Handle image add 
   const handleImageAddClick = useCallback(()=>{
     const input = document.createElement('input');
     input.setAttribute('type','file');
     input.setAttribute('accept','image/*');
+
+    const handlerFn = handleInputFileChange(input)
+
+    input.addEventListener('change',handlerFn)
+
     input.click();
-  },[]);
+  },[handleInputFileChange]);
+
+  const handleImageRemoval = useCallback(()=>{
+    setImageURL('');
+  },[])
 
   ///Create Tweet Callback
-  const handleCreateTweet = useCallback(()=>{
-    mutate({
-      content
+  const handleCreateTweet = useCallback(async ()=>{
+    await mutateAsync({
+      content,
+      ImageURL,
     });
-  },[content,mutate])
+
+    setContent('')
+    setImageURL('')
+  },[mutateAsync,content,ImageURL])
 
   return (
     <div>
@@ -60,6 +108,20 @@ export default function Home(props:HomeProps) {
                     rows={2}
                     placeholder="What's happening?" 
                   ></textarea>
+                  {
+                    ImageURL &&
+                    <div className='flex'>
+                      <Image
+                    src={ImageURL}
+                    alt='tweet-image'
+                    width={250}
+                    height={250}
+                    /> 
+                    <IoMdClose onClick={handleImageRemoval} className=' hover:bg-slate-600 cursor-pointer '/>
+                    </div>
+                    
+
+                  }
                 <div className='mt-1 flex justify-between items-center'>
                   <RiImageAddLine onClick={handleImageAddClick} className="text-xl" />
                   <button onClick={handleCreateTweet}
@@ -70,8 +132,8 @@ export default function Home(props:HomeProps) {
           </div>
         </div>
         }
-        {props.tweets &&
-        props.tweets.map(tweet=> tweet ?
+        {tweets &&
+        tweets.map(tweet=> tweet ?
         <FeedCard key={tweet?.id} data={tweet as Tweet} /> : null)
         }
       </TwitterLayout>

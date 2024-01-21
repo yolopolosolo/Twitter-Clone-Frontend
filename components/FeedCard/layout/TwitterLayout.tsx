@@ -142,12 +142,12 @@ const TwitterLayout: React.FC<TwitterLayoutProps> = (props)=>{
                             user &&
                             user.profileImageUrl &&
                             (
-                            <Image className='rounded-full' src={user.profileImageUrl} alt='user-image' height={50}
-                                width={50} />
+                            <Image className='rounded-full' src={user.profileImageUrl} alt='user-image' height={40}
+                                width={40} />
                             )
                             }
                             <div className='flex'>
-                                <h3 className='hidden sm:inline text-xl'>{user.firstName} {user.lastName}</h3>
+                                <h3 className='hidden sm:inline text-lg'>{user.firstName} {user.lastName}</h3>
                             </div>
 
                         </div>
@@ -160,12 +160,35 @@ const TwitterLayout: React.FC<TwitterLayoutProps> = (props)=>{
                     {props.children}
                 </div>
                 <div className='col-span-0 sm:col-span-3 p-5'>
-                    {!user &&
-                    <div className=" p-5 bg-slate-950 rounded-lg">
+                    {
+                    !user ?
+                    (<div className=" p-5 bg-slate-950 rounded-lg">
                         <h1 className='my-2 text-xl'>New To Twitter ?</h1>
                         <GoogleLogin onSuccess={handleGoogleLogin} />
                     </div>
+                    ) :
+                    <div className="  ml-8  p-5 bg-slate-900 rounded-lg">
+                        <h1 className='my-2 mb-3 text-xl'>Users You May Know</h1>
+                        {
+                        user?.recommendedUsers?.map(x =>
+                        <div className="flex items-center gap-3 mt-2 p-1" key={x?.id}>
+                            {
+                            x?.profileImageUrl &&
+                            <Image className='rounded-full' src={x?.profileImageUrl} alt="recommended-user-image" height={60}
+                                width={60}></Image>
+                            }
+                            <div>
+                                <div className="text-md">
+                                {x?.firstName} {x?.lastName}
+                                </div>
+                                <Link href={`/${x?.id}`} className="bg-white text-black text-md px-4 py-1 rounded-lg "> View</Link>
+                            </div>
+                            
+                        </div>
+                        )}
+                    </div>
                     }
+                    
                 </div>
             </div>
         </div>

@@ -13,7 +13,7 @@ interface FeedCardProps{
 
 const FeedCard: React.FC<FeedCardProps> = (props) => {
     const {data} = props
-    return <div className="border-b border-slate-900 p-5 hover:bg-slate-800 transition-all cursor-pointer">
+    return <div className="border-b border-slate-900 p-5 hover:bg-slate-800 transition-all">
         <div className="grid grid-cols-12 gap-3">
             <div className=" col-span-1">{
                 data.author?.profileImageUrl &&
@@ -22,10 +22,15 @@ const FeedCard: React.FC<FeedCardProps> = (props) => {
             </div>
             <div className=" col-span-11">
                 <h5>
-                    <Link href={`/${data.author?.id}`}>{data.author?.firstName} {data.author?.lastName}
+                    <Link className=' hover:bg-slate-700 rounded-full p-1 text-slate-400 transition-all' href={`/${data.author?.id}`}>{data.author?.firstName} {data.author?.lastName}
                     </Link>
                 </h5>
                 <p>{data.content}</p>
+                { data.ImageURL &&
+                <div>
+                <Image src={data.ImageURL} alt="image-content" height={250} width={250}/>
+                </div>
+                }
 
                 <div className="flex justify-between mt-5 text-xl p-3 w-[90%]">
                     <div> <LiaReplySolid/></div>

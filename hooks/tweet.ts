@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {createTweetMutation} from "../graphql/mutations/tweet"
 import { CreateTweetData } from "@/gql/graphql"
 import toast from "react-hot-toast"
+import { error } from "console"
 
 export const useCreateTweet = ()=>{
     const queryClient = useQueryClient();
@@ -19,10 +20,12 @@ export const useCreateTweet = ()=>{
                 await queryClient.invalidateQueries({queryKey:["all-tweets"]})
                 toast.success('Success',{id:"1"})
             },
+            onError: async (error)=>{
+                toast.error("Please Wait",{id:"1"})
+            }
 
         }
     )
-
     return mutation;
 }
 

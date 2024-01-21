@@ -14,9 +14,28 @@ query GetUser {
     lastName,
     profileImageUrl,
     email
+    follower {
+      id
+      firstName
+      lastName,
+      profileImageUrl,
+    }
+    following {
+      id
+      firstName
+      lastName,
+      profileImageUrl
+    }
+    recommendedUsers {
+      id,
+      firstName,
+      lastName,
+      profileImageUrl
+    }
     tweets{
       id
       content
+      ImageURL
       author{
         id,
         firstName,
@@ -36,9 +55,22 @@ query GetUserById($id: ID!) {
     lastName,
     profileImageUrl,
     email
+    follower {
+      id
+      firstName
+      lastName,
+      profileImageUrl
+    }
+    following {
+      id
+      firstName
+      lastName,
+      profileImageUrl
+    }
     tweets{
       id
       content
+      ImageURL
       author{
         id,
         firstName,
