@@ -3,7 +3,7 @@ import { GraphQLClient } from "graphql-request";
 const isClient = typeof window !== 'undefined';
 
 export const graphqlClient = new GraphQLClient(
-    'http://localhost:8000/graphql',
+    'https://twitter-clone-backend-g7sr.onrender.com/graphql',
     {
         headers: ()=>({
             Authorization: 
